@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App Test</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 28px;
+            margin-bottom: 15px;
+            color: white;
+        }
+        
+        p {
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+        
+        .info-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: left;
+            font-size: 14px;
+        }
+        
+        .btn {
+            background: #0088cc;
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .btn:hover {
+            background: #0077b3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 136, 204, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn:disabled {
+            background: #4CAF50;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(76, 175, 80, 0.2);
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✅ Telegram Web App</h1>
+        <p>Bu test Web App. Botga xabar yuborish uchun tugmani bosing.</p>
+        
+        <div class="info-box">
+            <strong>🔍 Ma'lumot:</strong><br>
+            • Telegram Web App API ishlayapti<br>
+            • GitHub Pages'da joylashgan<br>
+            • HTTPS orqali ishlaydi
+        </div>
+        
+        <button class="btn" id="sendBtn" onclick="sendToBot()">
+            📨 Botga xabar yuborish
+        </button>
+        
+        <div class="status" id="status"></div>
+    </div>
+    
+    <script>
+        // Telegram Web App
+        const tg = window.Telegram.WebApp;
+        
+        // Elementlar
+        const sendBtn = document.getElementById('sendBtn');
+        const status = document.getElementById('status');
+        
+        // App'ni to'liq ekran qilish
+        tg.expand();
+        
+        // Bot'ga xabar yuborish
+        function sendToBot() {
+            // Xabar tayyorlaymiz
+            const message = "👋 Salom! Men Web App'dan yuboryapman. " + 
+                          "Sana: " + new Date().toLocaleString('uz-UZ');
+            
+            // Bot'ga yuboramiz
+            tg.sendData(message);
+            
+            // Tugmani o'zgartiramiz
+            sendBtn.innerHTML = "✅ Xabar yuborildi";
+            sendBtn.disabled = true;
+            sendBtn.classList.add('btn:disabled');
+            
+            // Status ko'rsatamiz
+            status.textContent = "Xabar bot'ga muvaffaqiyatli yuborildi!";
+            status.className = "status success";
+            
+            // 2 soniyadan so'ng app'ni yopamiz
+            setTimeout(() => {
+                tg.close();
+            }, 2000);
+        }
+        
+        // Tayyor ekanligini bildiramiz
+        tg.ready();
+        
+        // Konsolga ma'lumot chiqaramiz (debug uchun)
+        console.log("✅ Telegram Web App ishga tushdi");
+        console.log("Platform:", tg.platform);
+        console.log("User:", tg.initDataUnsafe.user);
+        
+        // Agar Telegram ichida emas, brauzerda ochilgan bo'lsa
+        if (!tg.initData) {
+            document.querySelector('h1').textContent += " (TEST MODE)";
+            sendBtn.onclick = function() {
+                alert("TEST: Xabar yuborildi!\nAslida bu Telegram ichida ishlaydi.");
+                sendBtn.innerHTML = "✅ Test muvaffaqiyatli";
+                sendBtn.disabled = true;
+            };
+        }
+    </script>
+</body>
+</html>
