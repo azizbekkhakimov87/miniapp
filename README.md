@@ -1,4 +1,104 @@
-<!DOCTYPE html>
+import telebot
+import json
+from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
+from datetime import datetime
+
+TOKEN = "BOT_TOKENINGIZ"
+bot = telebot.TeleBot(TOKEN)
+
+@bot.message_handler(commands=['start'])
+def start(message):
+    markup = InlineKeyboardMarkup()
+    btn = InlineKeyboardButton(
+        "📱 Web App'ni ochish",
+        web_app={"url": "https://azizbekhakimov87.github.io/telegram-test-app/"}
+    )
+    markup.add(btn)
+    
+    bot.reply_to(message, 
+        "Web App'ni ochish uchun tugmani bosing:\n"
+        "U orqali xabar, shikoyat yoki takliflaringizni yuborishingiz mumkin.",
+        reply_markup=markup)
+
+@bot.message_handler(content_types=['web_app_data'])
+def handle_web_app_data(message):
+    try:
+        # JSON formatdagi ma'lumotni o'qiymiz
+        data = json.loads(message.web_app_data.data)
+        
+        user = message.from_user
+        chat_id = message.chat.id
+        
+        # Ma'lumot turiga qarab ishlov berish
+        if isinstance(data, dict):
+            # Dict formatida kelgan
+            response = format_webapp_response(data, user)
+        else:
+            # Oddiy text formatida kelgan
+            response = f"📨 Web App'dan xabar:\n\n{data}"
+        
+        # Foydalanuvchiga javob
+        bot.reply_to(message, response)
+        
+        # Konsolga log
+        print(f"\n{'='*50}")
+        print(f"📱 WEB APP XABARI")
+        print(f"👤 {user.first_name} (ID: {user.id})")
+        print(f"📊 Ma'lumot: {data}")
+        print(f"{'='*50}")
+        
+    except json.JSONDecodeError:
+        # Agar JSON emas, oddiy text deb hisoblaymiz
+        bot.reply_to(message, f"📨 Web App'dan xabar:\n\n{message.web_app_data.data}")
+    except Exception as e:
+        bot.reply_to(message, f"❌ Xatolik: {str(e)}")
+        print(f"Web App xatosi: {e}")
+
+def format_webapp_response(data, user):
+    """Web App'dan kelgan ma'lumotni formatlash"""
+    
+    if isinstance(data, str):
+        # Agar string bo'lsa, test natijalari deb hisoblaymiz
+        if data.startswith("🧪 Test natijalari"):
+            return f"✅ {data}"
+        else:
+            return f"📨 {data}"
+    
+    elif isinstance(data, dict):
+        # Dict formatida kelgan ma'lumot
+        if data.get('type') == 'message':
+            return f"""
+📋 **Yangi xabar**
+
+📝 **Matn:** {data.get('content', 'Noma\'lum')}
+🏷️ **Turi:** {data.get('messageType', 'oddiy')}
+📂 **Kategoriya:** {data.get('category', 'umumiy')}
+👤 **Yuboruvchi:** {user.first_name}
+🆔 **ID:** {user.id}
+🕐 **Vaqt:** {datetime.now().strftime('%H:%M:%S')}
+
+✅ **Xabar qabul qilindi!**
+            """
+        elif data.get('type') == 'quick_message':
+            return f"""
+⚡ **Tezkor xabar**
+
+💬 {data.get('content', 'Noma\'lum')}
+
+👤 {user.first_name}
+🕐 {datetime.now().strftime('%H:%M:%S')}
+            """
+    
+    return f"📨 {str(data)}"
+
+@bot.message_handler(func=lambda m: True)
+def echo(message):
+    bot.reply_to(message, f"📝 Siz: {message.text}")
+
+if __name__ == '__main__':
+    print("🤖 Web App Bot ishga tushdi...")
+    print("📱 Telegram'da /start ni yuboring")
+    bot.polling()<!DOCTYPE html>
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
