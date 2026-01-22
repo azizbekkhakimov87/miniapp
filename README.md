@@ -3,11 +3,11 @@ from telebot.types import InlineKeyboardMarkup, InlineKeyboardButton
 from datetime import datetime
 
 TOKEN = "BOT_TOKENINGIZNI_QOYING"
-bot = telebot.TeleBot(TOKEN)
+bot = telebot.TeleBot(8448936121:AAEgGKLh5LArf4dGSxbJ4mcQHzR3crb7KJQ)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    web_app_url = "https://azizbekhakimov87.github.io/telegram-test-app/"
+    web_app_url = "https://azizbekkhakimov87.github.io/miniapp/"
     
     markup = InlineKeyboardMarkup()
     btn = InlineKeyboardButton(
